@@ -56,4 +56,35 @@ categoriesRouter.post('/', async (req, res, next) => {
   }
 });
 
+categoriesRouter.delete('/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    const [categories_pkeys] = await mySqlDb
+      .getConnection()
+      .query('SELECT category_id FROM items');
+
+    const result = JSON.stringify(categories_pkeys);
+    const parsed: Record<'category_id', number>[] = JSON.parse(result);
+
+    const foundIndex = parsed.findIndex(
+      (item) => item.category_id === Number(id)
+    );
+
+    if (foundIndex !== -1) {
+      return res.status(403).send({
+        error: 'DELETE restricted. This category has reference in items table',
+      });
+    }
+
+    await mySqlDb
+      .getConnection()
+      .query(`DELETE FROM categories WHERE id = ${id} LIMIT 1`);
+
+    return res.send(`DELETE category with id ${id}`);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default categoriesRouter;
