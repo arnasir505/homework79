@@ -87,4 +87,29 @@ categoriesRouter.delete('/:id', async (req, res, next) => {
   }
 });
 
+categoriesRouter.put('/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!req.body.name) {
+      return res.status(422).send({ error: 'Category name is required!' });
+    }
+
+    const categoryData: Resource = {
+      name: req.body.name,
+      description: req.body.description || null,
+    };
+
+    await mySqlDb
+      .getConnection()
+      .query(
+        'UPDATE categories SET name=?, description=? ' + `WHERE id=${id}`,
+        [categoryData.name, categoryData.description]
+      );
+
+    return res.send({ id: id, ...categoryData });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default categoriesRouter;
