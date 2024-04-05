@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import categoriesRouter from './routers/categories';
 import mySqlDb from './mySqlDb';
+import placesRouter from './routers/places';
 
 const app = express();
 const port = 8000;
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 app.use('/categories', categoriesRouter);
+app.use('/places', placesRouter);
 
 const run = async () => {
   await mySqlDb.init();
