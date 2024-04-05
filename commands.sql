@@ -25,7 +25,7 @@ create table items
     place_id    int          not null,
     name        VARCHAR(50)  not null,
     description TEXT         null,
-    image       VARCHAR(100) null,
+    registration_date       VARCHAR(100) not null,
     constraint items_pk
         primary key (id),
     constraint items_categories_id_fk
@@ -42,4 +42,4 @@ INSERT INTO `stock-taking`.places (name, description) VALUES ('Кухня', 'М�
 INSERT INTO `stock-taking`.places (name, description) VALUES ('Зал для переговоров', 'Комната для серъезных обсуждений');
 INSERT INTO `stock-taking`.places (name, description) VALUES ('Зона отдыха', 'Место для расслабления');
 INSERT INTO `stock-taking`.places (name, description) VALUES ('Рабочая зона', null);
-INSERT INTO `stock-taking`.items (category_id, place_id, name, description, image) VALUES (101, 203, 'Пуфик', 'Мягкое кресло-пуфик', null);
+INSERT INTO `stock-taking`.items (category_id, place_id, name, description, registration_date) VALUES (101, 203, 'Пуфик', 'Мягкое кресло-пуфик', '05.04.2024');
