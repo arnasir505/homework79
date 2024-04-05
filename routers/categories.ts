@@ -60,18 +60,31 @@ categoriesRouter.delete('/:id', async (req, res, next) => {
   try {
     const id = req.params.id;
 
+    const [categories_ids] = await mySqlDb
+      .getConnection()
+      .query('SELECT id FROM categories');
+
+    const result = JSON.stringify(categories_ids);
+    const parsed: Record<'id', number>[] = JSON.parse(result);
+
+    const foundIndexOfCategoryId = parsed.findIndex((category) => category.id === Number(id));
+
+    if (foundIndexOfCategoryId === -1) {
+      return res.status(404).send({ error: 'Not Found!' });
+    }
+
     const [categories_pkeys] = await mySqlDb
       .getConnection()
       .query('SELECT category_id FROM items');
 
-    const result = JSON.stringify(categories_pkeys);
-    const parsed: Record<'category_id', number>[] = JSON.parse(result);
+    const result2 = JSON.stringify(categories_pkeys);
+    const parsed2: Record<'category_id', number>[] = JSON.parse(result2);
 
-    const foundIndex = parsed.findIndex(
+    const foundIndexOfCategoryIdReferenced = parsed2.findIndex(
       (category) => category.category_id === Number(id)
     );
 
-    if (foundIndex !== -1) {
+    if (foundIndexOfCategoryIdReferenced !== -1) {
       return res.status(403).send({
         error: 'DELETE restricted. This category has reference in items table',
       });
@@ -98,7 +111,7 @@ categoriesRouter.put('/:id', async (req, res, next) => {
     const result = JSON.stringify(categories_ids);
     const parsed: Record<'id', number>[] = JSON.parse(result);
 
-    const foundIndex = parsed.findIndex((place) => place.id === Number(id));
+    const foundIndex = parsed.findIndex((category) => category.id === Number(id));
 
     if (foundIndex === -1) {
       return res.status(404).send({ error: 'Not Found!' });

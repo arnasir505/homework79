@@ -78,6 +78,19 @@ itemsRouter.delete('/:id', async (req, res, next) => {
   try {
     const id = req.params.id;
 
+    const [items_ids] = await mySqlDb
+      .getConnection()
+      .query('SELECT id FROM items');
+
+    const result = JSON.stringify(items_ids);
+    const parsed: Record<'id', number>[] = JSON.parse(result);
+
+    const foundIndex = parsed.findIndex((item) => item.id === Number(id));
+
+    if (foundIndex === -1) {
+      return res.status(404).send({ error: 'Not Found!' });
+    }
+
     await mySqlDb
       .getConnection()
       .query(`DELETE FROM items WHERE id = ${id} LIMIT 1`);
