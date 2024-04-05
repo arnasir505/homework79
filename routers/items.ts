@@ -1,7 +1,7 @@
 import express from 'express';
 import mySqlDb from '../mySqlDb';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
-import { ResourceComplex } from '../types';
+import {  ApiResourceComplex, ResourceComplex } from '../types';
 
 const itemsRouter = express.Router();
 
@@ -23,7 +23,7 @@ itemsRouter.get('/:id', async (req, res) => {
     .getConnection()
     .query(`SELECT * from items WHERE id = ${id}`)) as RowDataPacket[];
 
-  const item = result[0];
+  const item: ApiResourceComplex = result[0];
 
   if (!item) {
     return res.status(404).send({ error: 'Not Found!' });
@@ -39,7 +39,7 @@ itemsRouter.post('/', async (req, res, next) => {
       !req.body.placeId ||
       !req.body.name ||
       !req.body.registrationDate
-    ) {
+      ) {
       return res.status(422).send({
         error:
           'Name, categoryId, placeId and registrationDate fields are required!',
@@ -139,7 +139,7 @@ itemsRouter.put('/:id', async (req, res, next) => {
         ]
       );
 
-    return res.send({ id: id, ...itemData });
+    return res.send({ id: Number(id), ...itemData });
   } catch (error) {
     next(error);
   }

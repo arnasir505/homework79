@@ -10,3 +10,11 @@ export interface ResourceComplex {
   description: string | null;
   registrationDate: string;
 }
+
+export interface ApiResource extends Resource {
+  id: number;
+}
+
+export interface ApiResourceComplex extends ResourceComplex {
+  id: number;
+}

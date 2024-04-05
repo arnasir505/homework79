@@ -1,7 +1,7 @@
 import express from 'express';
 import mySqlDb from '../mySqlDb';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
-import { Resource } from '../types';
+import { ApiResource, Resource } from '../types';
 
 const categoriesRouter = express.Router();
 
@@ -23,7 +23,7 @@ categoriesRouter.get('/:id', async (req, res) => {
     .getConnection()
     .query(`SELECT * from categories WHERE id = ${id}`)) as RowDataPacket[];
 
-  const category = result[0];
+  const category: ApiResource = result[0];
 
   if (!category) {
     return res.status(404).send({ error: 'Not Found!' });
@@ -120,7 +120,7 @@ categoriesRouter.put('/:id', async (req, res, next) => {
         [categoryData.name, categoryData.description]
       );
 
-    return res.send({ id: id, ...categoryData });
+    return res.send({ id: Number(id), ...categoryData });
   } catch (error) {
     next(error);
   }

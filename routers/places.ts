@@ -1,7 +1,7 @@
 import express from 'express';
 import mySqlDb from '../mySqlDb';
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
-import { Resource } from '../types';
+import { ApiResource, Resource } from '../types';
 
 const placesRouter = express.Router();
 
@@ -23,7 +23,7 @@ placesRouter.get('/:id', async (req, res) => {
     .getConnection()
     .query(`SELECT * from places WHERE id = ${id}`)) as RowDataPacket[];
 
-  const place = result[0];
+  const place: ApiResource = result[0];
 
   if (!place) {
     return res.status(404).send({ error: 'Not Found!' });
@@ -120,7 +120,7 @@ placesRouter.put('/:id', async (req, res, next) => {
         placeData.description,
       ]);
 
-    return res.send({ id: id, ...placeData });
+    return res.send({ id: Number(id), ...placeData });
   } catch (error) {
     next(error);
   }
