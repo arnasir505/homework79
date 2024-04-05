@@ -43,3 +43,6 @@ INSERT INTO `stock-taking`.places (name, description) VALUES ('Зал для п�
 INSERT INTO `stock-taking`.places (name, description) VALUES ('Зона отдыха', 'Место для расслабления');
 INSERT INTO `stock-taking`.places (name, description) VALUES ('Рабочая зона', null);
 INSERT INTO `stock-taking`.items (category_id, place_id, name, description, registration_date) VALUES (101, 203, 'Пуфик', 'Мягкое кресло-пуфик', '05.04.2024');
+INSERT INTO `stock-taking`.items (category_id, place_id, name, description, registration_date) VALUES (102, 201, 'Холодильник', null, '04.04.2024');
+INSERT INTO `stock-taking`.items (category_id, place_id, name, description, registration_date) VALUES (103, 202, 'Проектор', 'Проектор для презентаций', '06.04.2024');
+INSERT INTO `stock-taking`.items (category_id, place_id, name, description, registration_date) VALUES (104, 204, 'Картина Крик', 'Кричащая в отчаянии человеческая фигура на фоне кроваво-красного неба и крайне обобщённого пейзажного фона', '03.04.2024');
