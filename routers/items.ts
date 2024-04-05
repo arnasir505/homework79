@@ -88,4 +88,61 @@ itemsRouter.delete('/:id', async (req, res, next) => {
   }
 });
 
+itemsRouter.put('/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    const [items_ids] = await mySqlDb
+      .getConnection()
+      .query('SELECT id FROM items');
+
+    const result = JSON.stringify(items_ids);
+    const parsed: Record<'id', number>[] = JSON.parse(result);
+
+    const foundIndex = parsed.findIndex((item) => item.id === Number(id));
+
+    if (foundIndex === -1) {
+      return res.status(404).send({ error: 'Not Found!' });
+    }
+
+    if (
+      !req.body.categoryId ||
+      !req.body.placeId ||
+      !req.body.name ||
+      !req.body.registrationDate
+    ) {
+      return res.status(422).send({
+        error:
+          'Name, categoryId, placeId and registrationDate fields are required!',
+      });
+    }
+
+    const itemData: ResourceComplex = {
+      categoryId: req.body.categoryId,
+      placeId: req.body.placeId,
+      name: req.body.name,
+      description: req.body.description || null,
+      registrationDate: req.body.registrationDate,
+    };
+
+    await mySqlDb
+      .getConnection()
+      .query(
+        'UPDATE items SET category_id=?, place_id=?, name=?, description=?, registration_date=? ' +
+          `WHERE id=${id}`,
+        [
+          itemData.categoryId,
+          itemData.placeId,
+          itemData.name,
+          itemData.description,
+          itemData.registrationDate,
+        ]
+      );
+
+    return res.send({ id: id, ...itemData });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default itemsRouter;
