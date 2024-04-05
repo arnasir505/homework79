@@ -45,7 +45,7 @@ placesRouter.post('/', async (req, res, next) => {
 
     const [result] = (await mySqlDb
       .getConnection()
-      .query('INSERT INTO categories (name, description)' + 'VALUES (?, ?)', [
+      .query('INSERT INTO places (name, description)' + 'VALUES (?, ?)', [
         placeData.name,
         placeData.description,
       ])) as ResultSetHeader[];
