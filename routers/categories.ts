@@ -68,7 +68,7 @@ categoriesRouter.delete('/:id', async (req, res, next) => {
     const parsed: Record<'category_id', number>[] = JSON.parse(result);
 
     const foundIndex = parsed.findIndex(
-      (item) => item.category_id === Number(id)
+      (category) => category.category_id === Number(id)
     );
 
     if (foundIndex !== -1) {

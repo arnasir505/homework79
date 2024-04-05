@@ -78,7 +78,9 @@ itemsRouter.delete('/:id', async (req, res, next) => {
   try {
     const id = req.params.id;
 
-    await mySqlDb.getConnection().query(`DELETE FROM items WHERE id = ${id} LIMIT 1`);
+    await mySqlDb
+      .getConnection()
+      .query(`DELETE FROM items WHERE id = ${id} LIMIT 1`);
 
     return res.send(`DELETE item with id ${id}`);
   } catch (error) {

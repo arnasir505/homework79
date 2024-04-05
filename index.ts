@@ -11,7 +11,6 @@ const port = 8000;
 app.use(cors());
 app.use(express.json());
 
-
 app.use('/categories', categoriesRouter);
 app.use('/places', placesRouter);
 app.use('/items', itemsRouter);

@@ -56,4 +56,35 @@ placesRouter.post('/', async (req, res, next) => {
   }
 });
 
+placesRouter.delete('/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    const [places_pkeys] = await mySqlDb
+      .getConnection()
+      .query('SELECT place_id FROM items');
+
+    const result = JSON.stringify(places_pkeys);
+    const parsed: Record<'place_id', number>[] = JSON.parse(result);
+
+    const foundIndex = parsed.findIndex(
+      (place) => place.place_id === Number(id)
+    );
+
+    if (foundIndex !== -1) {
+      return res.status(403).send({
+        error: 'DELETE restricted. This place has reference in items table',
+      });
+    }
+
+    await mySqlDb
+      .getConnection()
+      .query(`DELETE FROM places WHERE id = ${id} LIMIT 1`);
+
+    return res.send(`DELETE place with id ${id}`);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default placesRouter;
