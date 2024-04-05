@@ -1,6 +1,7 @@
 import express from 'express';
 import mySqlDb from '../mySqlDb';
-import { RowDataPacket } from 'mysql2';
+import { ResultSetHeader, RowDataPacket } from 'mysql2';
+import { Resource } from '../types';
 
 const categoriesRouter = express.Router();
 
@@ -29,6 +30,30 @@ categoriesRouter.get('/:id', async (req, res) => {
   }
 
   return res.send(category);
+});
+
+categoriesRouter.post('/', async (req, res, next) => {
+  try {
+    if (!req.body.name) {
+      return res.status(422).send({ error: 'Category name is required!' });
+    }
+
+    const categoryData: Resource = {
+      name: req.body.name,
+      description: req.body.description || null,
+    };
+
+    const [result] = (await mySqlDb
+      .getConnection()
+      .query('INSERT INTO categories (name, description)' + 'VALUES (?, ?)', [
+        categoryData.name,
+        categoryData.description,
+      ])) as ResultSetHeader[];
+
+    return res.send({ id: result.insertId, ...categoryData });
+  } catch (error) {
+    next(error);
+  }
 });
 
 export default categoriesRouter;

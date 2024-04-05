@@ -20,7 +20,7 @@ itemsRouter.get('/:id', async (req, res) => {
 
   const [result] = (await mySqlDb
     .getConnection()
-    .query(`SELECT * from places WHERE id = ${id}`)) as RowDataPacket[];
+    .query(`SELECT * from items WHERE id = ${id}`)) as RowDataPacket[];
 
   const item = result[0];
 

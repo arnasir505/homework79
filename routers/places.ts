@@ -1,6 +1,7 @@
 import express from 'express';
 import mySqlDb from '../mySqlDb';
-import { RowDataPacket } from 'mysql2';
+import { ResultSetHeader, RowDataPacket } from 'mysql2';
+import { Resource } from '../types';
 
 const placesRouter = express.Router();
 
@@ -29,6 +30,30 @@ placesRouter.get('/:id', async (req, res) => {
   }
 
   return res.send(place);
+});
+
+placesRouter.post('/', async (req, res, next) => {
+  try {
+    if (!req.body.name) {
+      return res.status(422).send({ error: 'Place name is required!' });
+    }
+
+    const placeData: Resource = {
+      name: req.body.name,
+      description: req.body.description || null,
+    };
+
+    const [result] = (await mySqlDb
+      .getConnection()
+      .query('INSERT INTO categories (name, description)' + 'VALUES (?, ?)', [
+        placeData.name,
+        placeData.description,
+      ])) as ResultSetHeader[];
+
+    return res.send({ id: result.insertId, ...placeData });
+  } catch (error) {
+    next(error);
+  }
 });
 
 export default placesRouter;
