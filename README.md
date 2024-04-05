@@ -1,1 +1,1 @@
-# Nodejs server on ExpressJs + MySql
+# Stock-checking Nodejs server on ExpressJs + MySql
