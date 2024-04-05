@@ -1,6 +1,7 @@
 import express from 'express';
 import mySqlDb from '../mySqlDb';
-import { RowDataPacket } from 'mysql2';
+import { ResultSetHeader, RowDataPacket } from 'mysql2';
+import { ResourceComplex } from '../types';
 
 const itemsRouter = express.Router();
 
@@ -29,6 +30,60 @@ itemsRouter.get('/:id', async (req, res) => {
   }
 
   return res.send(item);
+});
+
+itemsRouter.post('/', async (req, res, next) => {
+  try {
+    if (
+      !req.body.categoryId ||
+      !req.body.placeId ||
+      !req.body.name ||
+      !req.body.registrationDate
+    ) {
+      return res.status(422).send({
+        error:
+          'Name, categoryId, placeId and registrationDate fields are required!',
+      });
+    }
+
+    const itemData: ResourceComplex = {
+      categoryId: req.body.categoryId,
+      placeId: req.body.placeId,
+      name: req.body.name,
+      description: req.body.description || null,
+      registrationDate: req.body.registrationDate,
+    };
+
+    const [result] = (await mySqlDb
+      .getConnection()
+      .query(
+        'INSERT INTO items (category_id, place_id, name, description, registration_date)' +
+          'VALUES (?, ?, ?, ?, ?)',
+        [
+          itemData.categoryId,
+          itemData.placeId,
+          itemData.name,
+          itemData.description,
+          itemData.registrationDate,
+        ]
+      )) as ResultSetHeader[];
+
+    return res.send({ id: result.insertId, ...itemData });
+  } catch (error) {
+    next(error);
+  }
+});
+
+itemsRouter.delete('/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    await mySqlDb.getConnection().query(`DELETE FROM items WHERE id = ${id} LIMIT 1`);
+
+    return res.send(`DELETE item with id ${id}`);
+  } catch (error) {
+    next(error);
+  }
 });
 
 export default itemsRouter;
